@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import useValidateRoom from '../hooks/useValidateRoom';
 import useJoinRoom from '../hooks/useJoinRoom';
 import useQuestions from '../hooks/useQuestions';
+import Loading from '../components/Loading';
 
 export default function Room() {
   const { id } = useParams();
@@ -10,7 +11,7 @@ export default function Room() {
   const { username, userIsRequired, FormToJoin } = useJoinRoom(id);
   const { questions, sendQuestion, questionInputRef } = useQuestions(id);
 
-  if (!roomIsValid) return <h1>Carregando...</h1>;
+  if (!roomIsValid) return <Loading />;
 
   return (
     <>
