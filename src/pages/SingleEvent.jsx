@@ -33,8 +33,8 @@ export default function SingleEvent() {
       }
       setGetUserFromLocalStorage(false);
 
-      if (!dataRoom.length || errorRoom) {
-        navigate('/event/not-found');
+      if (!dataRoom || !dataRoom.length || errorRoom) {
+        navigate('/room/not-found');
       } else {
         setEventFound(true);
       }

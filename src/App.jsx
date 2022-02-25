@@ -6,8 +6,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/event/not-found" element={<h1>Não existe nenhuma sala com esse ID</h1>} />
-        <Route path="/event/:id" element={<SingleEvent />} />
+        <Route path="/room">
+          <Route path="not-found" element={<h1>Não existe nenhuma sala com esse ID</h1>} />
+          <Route path=":id" element={<SingleEvent />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
