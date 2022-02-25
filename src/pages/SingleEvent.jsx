@@ -1,11 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import supabase from '../supabaseClient';
 
 export default function SingleEvent() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [username, setUsername] = useState();
   const [askForUsername, setAskForUsername] = useState(false);
+  const [eventFound, setEventFound] = useState(false);
   const [getUserFromLocalStorage, setGetUserFromLocalStorage] = useState(true);
   const [questions, setQuestions] = useState([]);
   const usernameInputRef = useRef();
@@ -20,15 +22,22 @@ export default function SingleEvent() {
   useEffect(() => {
     (async () => {
       const userId = localStorage.getItem('user');
+      const { data: dataRoom, error: errorRoom } = await supabase.from('rooms').select().eq('id', id);
       if (userId) {
         const { data: dataUser } = await supabase.from('users').select().eq('id', userId).eq('roomId', id);
         const { data: dataQuestions } = await supabase.from('questions').select();
         setQuestions(dataQuestions);
-        if (dataUser.length > 0) {
+        if (dataUser && dataUser.length > 0) {
           setUsername(dataUser[0].name);
         }
       }
       setGetUserFromLocalStorage(false);
+
+      if (!dataRoom.length || errorRoom) {
+        navigate('/event/not-found');
+      } else {
+        setEventFound(true);
+      }
     })();
 
     supabase
@@ -67,6 +76,8 @@ export default function SingleEvent() {
       content: questionTextAreaRef.current.value,
     });
   }
+
+  if (!eventFound) return <h1>Carregando...</h1>;
 
   return (
     <>
