@@ -6,13 +6,25 @@ export default function SingleEvent() {
   const { id } = useParams();
   const [username, setUsername] = useState();
   const [askForUsername, setAskForUsername] = useState(false);
+  const [getUserFromLocalStorage, setGetUserFromLocalStorage] = useState(true);
   const usernameInputRef = useRef();
 
   useEffect(() => {
-    if (!username) {
+    if (!username && !getUserFromLocalStorage) {
       setAskForUsername(true);
     }
   }, [username]);
+
+  useEffect(() => {
+    (async () => {
+      const userId = localStorage.getItem('user');
+      const { data } = await supabase.from('users').select().eq('id', userId).eq('roomId', id);
+      if (data) {
+        setUsername(data[0].name);
+      }
+      setGetUserFromLocalStorage(false);
+    })();
+  }, []);
 
   async function joinEvent(event) {
     event.preventDefault();
