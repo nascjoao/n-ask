@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useValidateRoom from './useValidateRoom';
 import supabase from '../supabaseClient';
+import styles from '../styles/hooks/useJoinRoom.module.scss';
 
 export default function useJoinRoom(roomId) {
   const roomIsValid = useValidateRoom(roomId);
   const [username, setUsername] = useState();
   const [userIsRequired, setUserIsRequired] = useState(false);
-  const [getUserFromLocalStorage, setGetUserFromLocalStorage] = useState(true);
   const usernameInputRef = useRef();
   const userId = localStorage.getItem('user');
 
@@ -22,33 +22,33 @@ export default function useJoinRoom(roomId) {
   }
 
   useEffect(() => {
-    if (roomIsValid) {
+    if (roomIsValid && !username) {
       (async () => {
         if (userId) {
           const { data } = await supabase.from('users').select().eq('id', userId).eq('roomId', roomId);
-
           if (data && data.length > 0) {
             setUsername(data[0].name);
           }
+        } else {
+          setUserIsRequired(true);
         }
-        setGetUserFromLocalStorage(false);
       })();
     }
-  }, [roomIsValid]);
-
-  useEffect(() => {
-    if (!username && !getUserFromLocalStorage && roomIsValid) {
-      setUserIsRequired(true);
-    }
-  }, [username, getUserFromLocalStorage, roomIsValid]);
+  }, [roomIsValid, username]);
 
   function FormToJoin() {
     return (
-      <form onSubmit={joinEvent}>
-        <h1>Boas vindas!</h1>
-        <p>Como gostaria de se identificar?</p>
-        <input type="text" ref={usernameInputRef} />
-      </form>
+      <div
+        className={styles.form}
+        initial={{ y: 50 }}
+        animate={{ y: 0 }}
+      >
+        <form onSubmit={joinEvent}>
+          <h1>Boas vindas!</h1>
+          <p>Como gostaria de se identificar?</p>
+          <input type="text" ref={usernameInputRef} />
+        </form>
+      </div>
     );
   }
 

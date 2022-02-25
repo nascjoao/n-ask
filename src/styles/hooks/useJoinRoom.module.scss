@@ -1,0 +1,38 @@
+@import "../colors";
+
+.form {
+  align-items: center;
+  background: rgba($color: $darker, $alpha: 80%);
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+
+  form {
+    background: $background;
+    border-radius: 1.25rem;
+    color: $white;
+    padding: 1.875rem;
+
+    h1 {
+      font-size: 2rem;
+    }
+
+    p {
+      font-size: 1.18rem;
+    }
+
+    input {
+      background: $darker;
+      border: none;
+      border-radius: 1.25rem;
+      color: $white;
+      margin-top: 1.875rem;
+      padding: 1rem;
+      width: 100%;
+    }
+  }
+}
