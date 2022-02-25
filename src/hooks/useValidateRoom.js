@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { validate as validateUUID } from 'uuid';
 import supabase from '../supabaseClient';
 
-export default function validateRoom(id) {
+export default function useValidateRoom(id) {
   const navigate = useNavigate();
   const [roomFound, setRoomFound] = useState(false);
   const goToNotFound = () => navigate('/room/not-found');

@@ -1,37 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import validateRoom from '../hooks/validateRoom';
+import useValidateRoom from '../hooks/useValidateRoom';
+import useJoinRoom from '../hooks/useJoinRoom';
 import supabase from '../supabaseClient';
 
 export default function SingleEvent() {
   const { id } = useParams();
-  const roomIsValid = validateRoom(id);
-  const [username, setUsername] = useState();
-  const [askForUsername, setAskForUsername] = useState(false);
-  const [getUserFromLocalStorage, setGetUserFromLocalStorage] = useState(true);
   const [questions, setQuestions] = useState([]);
-  const usernameInputRef = useRef();
   const questionTextAreaRef = useRef();
-
-  useEffect(() => {
-    if (!username && !getUserFromLocalStorage && roomIsValid) {
-      setAskForUsername(true);
-    }
-  }, [username, getUserFromLocalStorage]);
+  const roomIsValid = useValidateRoom(id);
+  const { username, userIsRequired, FormToJoin } = useJoinRoom(id);
 
   useEffect(() => {
     if (roomIsValid) {
       (async () => {
-        const userId = localStorage.getItem('user');
-        if (userId) {
-          const { data: dataUser } = await supabase.from('users').select().eq('id', userId).eq('roomId', id);
-          const { data: dataQuestions } = await supabase.from('questions').select();
-          setQuestions(dataQuestions);
-          if (dataUser && dataUser.length > 0) {
-            setUsername(dataUser[0].name);
-          }
-        }
-        setGetUserFromLocalStorage(false);
+        const { data: dataQuestions } = await supabase.from('questions').select();
+        setQuestions(dataQuestions);
       })();
 
       supabase
@@ -52,17 +36,6 @@ export default function SingleEvent() {
     }
   }, []);
 
-  async function joinEvent(event) {
-    event.preventDefault();
-    const { data } = await supabase.from('users').insert({
-      name: usernameInputRef.current.value,
-      roomId: id,
-    });
-    localStorage.setItem('user', data[0].id);
-    setUsername(usernameInputRef.current.value);
-    setAskForUsername(false);
-  }
-
   async function sendQuestion(event) {
     event.preventDefault();
     await supabase.from('questions').insert({
@@ -77,12 +50,8 @@ export default function SingleEvent() {
   return (
     <>
       <div>{id}</div>
-      { askForUsername && (
-        <form onSubmit={joinEvent}>
-          <h1>Boas vindas!</h1>
-          <p>Como gostaria de se identificar?</p>
-          <input type="text" ref={usernameInputRef} />
-        </form>
+      { userIsRequired && (
+        <FormToJoin />
       ) }
       <form onSubmit={sendQuestion}>
         <h2>Faça sua pergunta</h2>
