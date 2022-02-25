@@ -1,60 +1,55 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
+import validateRoom from '../hooks/validateRoom';
 import supabase from '../supabaseClient';
 
 export default function SingleEvent() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const roomIsValid = validateRoom(id);
   const [username, setUsername] = useState();
   const [askForUsername, setAskForUsername] = useState(false);
-  const [eventFound, setEventFound] = useState(false);
   const [getUserFromLocalStorage, setGetUserFromLocalStorage] = useState(true);
   const [questions, setQuestions] = useState([]);
   const usernameInputRef = useRef();
   const questionTextAreaRef = useRef();
 
   useEffect(() => {
-    if (!username && !getUserFromLocalStorage) {
+    if (!username && !getUserFromLocalStorage && roomIsValid) {
       setAskForUsername(true);
     }
   }, [username, getUserFromLocalStorage]);
 
   useEffect(() => {
-    (async () => {
-      const userId = localStorage.getItem('user');
-      const { data: dataRoom, error: errorRoom } = await supabase.from('rooms').select().eq('id', id);
-      if (userId) {
-        const { data: dataUser } = await supabase.from('users').select().eq('id', userId).eq('roomId', id);
-        const { data: dataQuestions } = await supabase.from('questions').select();
-        setQuestions(dataQuestions);
-        if (dataUser && dataUser.length > 0) {
-          setUsername(dataUser[0].name);
+    if (roomIsValid) {
+      (async () => {
+        const userId = localStorage.getItem('user');
+        if (userId) {
+          const { data: dataUser } = await supabase.from('users').select().eq('id', userId).eq('roomId', id);
+          const { data: dataQuestions } = await supabase.from('questions').select();
+          setQuestions(dataQuestions);
+          if (dataUser && dataUser.length > 0) {
+            setUsername(dataUser[0].name);
+          }
         }
-      }
-      setGetUserFromLocalStorage(false);
+        setGetUserFromLocalStorage(false);
+      })();
 
-      if (!dataRoom || !dataRoom.length || errorRoom) {
-        navigate('/room/not-found');
-      } else {
-        setEventFound(true);
-      }
-    })();
-
-    supabase
-      .from('questions')
-      .on('*', (payload) => {
-        if (payload.eventType === 'INSERT') {
-          setQuestions((currentQuestions) => [...currentQuestions, payload.new]);
-        } else {
-          setQuestions((currentQuestions) => {
-            const remainingQuestions = currentQuestions.filter(
-              (question) => question.id !== payload.old.id,
-            );
-            return remainingQuestions;
-          });
-        }
-      })
-      .subscribe();
+      supabase
+        .from('questions')
+        .on('*', (payload) => {
+          if (payload.eventType === 'INSERT') {
+            setQuestions((currentQuestions) => [...currentQuestions, payload.new]);
+          } else {
+            setQuestions((currentQuestions) => {
+              const remainingQuestions = currentQuestions.filter(
+                (question) => question.id !== payload.old.id,
+              );
+              return remainingQuestions;
+            });
+          }
+        })
+        .subscribe();
+    }
   }, []);
 
   async function joinEvent(event) {
@@ -77,7 +72,7 @@ export default function SingleEvent() {
     });
   }
 
-  if (!eventFound) return <h1>Carregando...</h1>;
+  if (!roomIsValid) return <h1>Carregando...</h1>;
 
   return (
     <>
