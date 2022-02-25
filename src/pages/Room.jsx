@@ -4,7 +4,7 @@ import useValidateRoom from '../hooks/useValidateRoom';
 import useJoinRoom from '../hooks/useJoinRoom';
 import useQuestions from '../hooks/useQuestions';
 
-export default function SingleEvent() {
+export default function Room() {
   const { id } = useParams();
   const roomIsValid = useValidateRoom(id);
   const { username, userIsRequired, FormToJoin } = useJoinRoom(id);
