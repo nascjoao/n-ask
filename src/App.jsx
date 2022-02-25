@@ -1,8 +1,14 @@
 import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import SingleEvent from './pages/SingleEvent';
 
 function App() {
   return (
-    <h1>Hello World</h1>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/event/:id" element={<SingleEvent />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
