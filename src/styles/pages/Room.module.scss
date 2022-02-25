@@ -1,0 +1,44 @@
+@import "../colors";
+
+.container {
+  color: $white;
+  margin: 6.25rem auto;
+  max-width: 37.5rem;
+  width: 100%;
+}
+
+.formQuestion {
+  display: grid;
+  gap: 1.25rem;
+  grid-template-rows: repeat(3, auto);
+  position: relative;
+
+  button {
+    background: $blue;
+    border: none;
+    border-radius: 1.25rem;
+    bottom: 0.5rem;
+    cursor: pointer;
+    opacity: 0;
+    padding: 0.31rem 1.25rem;
+    position: absolute;
+    right: 0.5rem;
+    transition: 0.2s;
+  }
+
+  textarea {
+    background: $darker;
+    border: none;
+    border-radius: 1.25rem;
+    color: $white;
+    padding: 1.25rem;
+
+    &::placeholder {
+      color: $lighter;
+    }
+
+    &:focus ~ button {
+      opacity: 1;
+    }
+  }
+}

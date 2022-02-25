@@ -4,6 +4,7 @@ import useValidateRoom from '../hooks/useValidateRoom';
 import useJoinRoom from '../hooks/useJoinRoom';
 import useQuestions from '../hooks/useQuestions';
 import Loading from '../components/Loading';
+import styles from '../styles/pages/Room.module.scss';
 
 export default function Room() {
   const { id } = useParams();
@@ -14,12 +15,15 @@ export default function Room() {
   if (!roomIsValid) return <Loading />;
 
   return (
-    <>
-      <div>{id}</div>
+    <div className={styles.container}>
+      <div>
+        <span>Sala: </span>
+        <span>{id}</span>
+      </div>
       { userIsRequired && (
         <FormToJoin />
       ) }
-      <form onSubmit={sendQuestion}>
+      <form onSubmit={sendQuestion} className={styles.formQuestion}>
         <h2>Faça sua pergunta</h2>
         { username && <strong>{username}</strong> }
         <textarea placeholder="Poderia me dizer..." ref={questionInputRef} />
@@ -30,6 +34,6 @@ export default function Room() {
           {question.content}
         </div>
       )) }
-    </>
+    </div>
   );
 }
