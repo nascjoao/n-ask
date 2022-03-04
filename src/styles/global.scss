@@ -20,3 +20,18 @@
 body {
   background: $background;
 }
+
+input,
+textarea {
+  background: $darker;
+  border: none;
+  border-radius: 1.25rem;
+  color: $white;
+  font-size: 0.875rem;
+  padding: 1.25rem;
+  width: 100%;
+
+  &::placeholder {
+    color: $lighter;
+  }
+}
