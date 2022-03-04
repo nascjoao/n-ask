@@ -9,6 +9,9 @@ export default function ThemeProvider({ children }) {
       heading: 'Inter, sans-serif',
       body: 'Inter, sans-serif',
     },
+    config: {
+      initialColorMode: 'dark',
+    },
   });
 
   return (
