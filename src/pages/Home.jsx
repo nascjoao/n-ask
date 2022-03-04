@@ -1,6 +1,9 @@
 import React, { useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as generateUUID } from 'uuid';
+import {
+  Flex, Box, Image, Button,
+} from '@chakra-ui/react';
 import imgNewEvent from '../assets/images/new-event.png';
 import imgJoinEvent from '../assets/images/join-event.png';
 import useModal from '../hooks/useModal';
@@ -42,16 +45,61 @@ export default function Home() {
 
   return (
     <>
-      <div>
-        <section>
-          <img src={imgNewEvent} alt="Pessoas criando algo" />
-          <button type="button" onClick={createOnOpen}>Criar sala</button>
-        </section>
-        <section>
-          <img src={imgJoinEvent} alt="Pessoas apresentando algo" />
-          <button type="button" onClick={joinOnOpen}>Entrar em sala</button>
-        </section>
-      </div>
+      <Flex
+        minHeight="100vh"
+        alignItems="center"
+        justifyContent="center"
+        gap={8}
+        padding={8}
+        flexDirection={['column', 'row']}
+      >
+        <Box
+          display="grid"
+          gridTemplateRows="auto 8rem"
+          background="gray.900"
+          borderRadius="2xl"
+          maxW="md"
+        >
+          <Image
+            src={imgNewEvent}
+            alt="Pessoas criando algo"
+            borderTopRadius="2xl"
+          />
+          <Button
+            onClick={createOnOpen}
+            height="100%"
+            borderRadius={0}
+            borderBottomRadius="2xl"
+            fontSize="lg"
+            background="gray.900"
+          >
+            Criar sala
+          </Button>
+        </Box>
+        <Box
+          display="grid"
+          gridTemplateRows="auto 8rem"
+          background="gray.900"
+          borderRadius="2xl"
+          maxW="md"
+        >
+          <Image
+            src={imgJoinEvent}
+            alt="Pessoas apresentando algo"
+            borderTopRadius="2xl"
+          />
+          <Button
+            onClick={joinOnOpen}
+            height="100%"
+            borderRadius={0}
+            borderBottomRadius="2xl"
+            fontSize="lg"
+            background="gray.900"
+          >
+            Entrar em sala
+          </Button>
+        </Box>
+      </Flex>
       { joinIsOpen && (
         <JoinModal heading="Entrar" subheading="Insira o ID da sala">
           <form onSubmit={joinRoom}>
@@ -60,7 +108,7 @@ export default function Home() {
               placeholder="Ex.: bc908c08-dea8-485b-aa0c-07a784d3dcb6"
               ref={roomIdInputRef}
             />
-            <button type="submit">Entrar</button>
+            <Button type="submit">Entrar</Button>
           </form>
         </JoinModal>
       ) }
