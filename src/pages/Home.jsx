@@ -1,8 +1,21 @@
-import React, { useContext, useRef } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as generateUUID } from 'uuid';
 import {
-  Flex, Box, Image, Button,
+  Flex,
+  Box,
+  Image,
+  Button,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  Input,
+  Text,
 } from '@chakra-ui/react';
 import imgNewEvent from '../assets/images/new-event.png';
 import imgJoinEvent from '../assets/images/join-event.png';
@@ -12,12 +25,13 @@ import supabase from '../supabaseClient';
 import { userContext } from '../contexts/User';
 
 export default function Home() {
-  const { Modal: JoinModal, isOpen: joinIsOpen, onOpen: joinOnOpen } = useModal();
+  const { isOpen: joinIsOpen, onOpen: joinOnOpen, onClose: joinOnClose } = useDisclosure();
   const { Modal: CreateModal, isOpen: createIsOpen, onOpen: createOnOpen } = useModal();
   const roomIdInputRef = useRef();
   const nameInputRef = useRef();
   const navigate = useNavigate();
   const { setUser } = useContext(userContext);
+  const [roomIdInputIsFilled, setRoomIdInputIsFilled] = useState(false);
 
   async function createRoom(event) {
     event.preventDefault();
@@ -100,18 +114,29 @@ export default function Home() {
           </Button>
         </Box>
       </Flex>
-      { joinIsOpen && (
-        <JoinModal heading="Entrar" subheading="Insira o ID da sala">
-          <form onSubmit={joinRoom}>
-            <input
-              type="text"
-              placeholder="Ex.: bc908c08-dea8-485b-aa0c-07a784d3dcb6"
-              ref={roomIdInputRef}
-            />
-            <Button type="submit">Entrar</Button>
-          </form>
-        </JoinModal>
-      ) }
+      <Modal isOpen={joinIsOpen} onClose={joinOnClose} isCentered initialFocusRef={roomIdInputRef}>
+        <ModalOverlay />
+        <ModalContent background="gray.800">
+          <ModalHeader>
+            <Text fontSize="3xl">Entrar</Text>
+            <Text fontSize="md">Insira o ID da sala</Text>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={joinRoom} id="joinRoom">
+              <Input
+                type="text"
+                placeholder="Ex.: bc908c08-dea8-485b-aa0c-07a784d3dcb6"
+                ref={roomIdInputRef}
+                onChange={({ target: { value } }) => setRoomIdInputIsFilled(!!value)}
+              />
+            </form>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" disabled={!roomIdInputIsFilled} type="submit" form="joinRoom">Entrar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       { createIsOpen && (
         <CreateModal heading="Criar sala" subheading="Como gostaria de se identificar?">
           <form onSubmit={createRoom}>
