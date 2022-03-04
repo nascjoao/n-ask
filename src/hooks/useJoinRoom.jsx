@@ -1,14 +1,19 @@
 import React, { useEffect, useRef, useState } from 'react';
 import useValidateRoom from './useValidateRoom';
 import supabase from '../supabaseClient';
-import styles from '../styles/hooks/useJoinRoom.module.scss';
+import useModal from './useModal';
 
 export default function useJoinRoom(roomId) {
   const roomIsValid = useValidateRoom(roomId);
   const [username, setUsername] = useState();
-  const [userIsRequired, setUserIsRequired] = useState(false);
   const usernameInputRef = useRef();
   const userId = localStorage.getItem('user');
+  const {
+    Modal,
+    onClose: setUserIsNotRequired,
+    onOpen: setUserIsRequired,
+    isOpen: userIsRequired,
+  } = useModal();
 
   async function joinEvent(event) {
     event.preventDefault();
@@ -18,7 +23,7 @@ export default function useJoinRoom(roomId) {
     });
     localStorage.setItem('user', data[0].id);
     setUsername(usernameInputRef.current.value);
-    setUserIsRequired(false);
+    setUserIsNotRequired();
   }
 
   useEffect(() => {
@@ -30,7 +35,7 @@ export default function useJoinRoom(roomId) {
             setUsername(data[0].name);
           }
         } else {
-          setUserIsRequired(true);
+          setUserIsRequired();
         }
       })();
     }
@@ -38,17 +43,13 @@ export default function useJoinRoom(roomId) {
 
   function FormToJoin() {
     return (
-      <div
-        className={styles.form}
-        initial={{ y: 50 }}
-        animate={{ y: 0 }}
-      >
+      <Modal>
         <form onSubmit={joinEvent}>
           <h1>Boas vindas!</h1>
           <p>Como gostaria de se identificar?</p>
           <input type="text" ref={usernameInputRef} />
         </form>
-      </div>
+      </Modal>
     );
   }
 

@@ -1,0 +1,29 @@
+@import "../colors";
+
+.overlay {
+  align-items: center;
+  background: rgba($color: $darker, $alpha: 80%);
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 9999;
+}
+
+.modal {
+  background: $background;
+  border-radius: 1.25rem;
+  padding: 1.875rem;
+
+  h1 {
+    font-size: 2rem;
+  }
+
+  p {
+    font-size: 1.18rem;
+    margin-bottom: 1.875rem;
+  }
+}
