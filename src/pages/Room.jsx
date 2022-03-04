@@ -9,7 +9,7 @@ import styles from '../styles/pages/Room.module.scss';
 export default function Room() {
   const { id } = useParams();
   const roomIsValid = useValidateRoom(id);
-  const { username, userIsRequired, FormToJoin } = useJoinRoom(id);
+  const { user, userIsRequired, FormToJoin } = useJoinRoom(id);
   const { questions, sendQuestion, questionInputRef } = useQuestions(id);
 
   if (!roomIsValid) return <Loading />;
@@ -25,7 +25,7 @@ export default function Room() {
       ) }
       <form onSubmit={sendQuestion} className={styles.formQuestion}>
         <h2>Faça sua pergunta</h2>
-        { username && <strong>{username}</strong> }
+        { user && <strong>{user.name}</strong> }
         <textarea placeholder="Poderia me dizer..." ref={questionInputRef} />
         <button type="submit">Enviar</button>
       </form>

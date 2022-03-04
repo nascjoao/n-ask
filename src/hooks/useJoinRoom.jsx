@@ -1,13 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import useValidateRoom from './useValidateRoom';
 import supabase from '../supabaseClient';
 import useModal from './useModal';
+import { userContext } from '../contexts/User';
 
 export default function useJoinRoom(roomId) {
   const roomIsValid = useValidateRoom(roomId);
-  const [username, setUsername] = useState();
   const usernameInputRef = useRef();
   const userId = localStorage.getItem('user');
+  const { user, setUser } = useContext(userContext);
   const {
     Modal,
     onClose: setUserIsNotRequired,
@@ -17,29 +18,32 @@ export default function useJoinRoom(roomId) {
 
   async function joinEvent(event) {
     event.preventDefault();
-    const { data } = await supabase.from('users').insert({
+    const { data: [{ id }] } = await supabase.from('users').insert({
       name: usernameInputRef.current.value,
       roomId,
     });
-    localStorage.setItem('user', data[0].id);
-    setUsername(usernameInputRef.current.value);
+    localStorage.setItem('user', id);
+    setUser({
+      id,
+      name: usernameInputRef.current.value,
+    });
     setUserIsNotRequired();
   }
 
   useEffect(() => {
-    if (roomIsValid && !username) {
+    if (roomIsValid && !user) {
       (async () => {
         if (userId) {
           const { data } = await supabase.from('users').select().eq('id', userId).eq('roomId', roomId);
           if (data && data.length > 0) {
-            setUsername(data[0].name);
+            setUser({ id: data[0].id, name: data[0].name });
           }
         } else {
           setUserIsRequired();
         }
       })();
     }
-  }, [roomIsValid, username]);
+  }, [roomIsValid, user]);
 
   function FormToJoin() {
     return (
@@ -53,5 +57,5 @@ export default function useJoinRoom(roomId) {
     );
   }
 
-  return { username, userIsRequired, FormToJoin };
+  return { user, userIsRequired, FormToJoin };
 }

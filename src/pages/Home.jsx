@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { v4 as generateUUID } from 'uuid';
 import imgNewEvent from '../assets/images/new-event.png';
@@ -7,6 +7,7 @@ import useModal from '../hooks/useModal';
 import supabase from '../supabaseClient';
 
 import styles from '../styles/pages/Home.module.scss';
+import { userContext } from '../contexts/User';
 
 export default function Home() {
   const { Modal: JoinModal, isOpen: joinIsOpen, onOpen: joinOnOpen } = useModal();
@@ -14,6 +15,7 @@ export default function Home() {
   const roomIdInputRef = useRef();
   const nameInputRef = useRef();
   const navigate = useNavigate();
+  const { setUser } = useContext(userContext);
 
   async function createRoom(event) {
     event.preventDefault();
@@ -25,6 +27,10 @@ export default function Home() {
       id: userId,
       name: nameInputRef.current.value,
       roomId,
+    });
+    setUser({
+      id: userId,
+      name: nameInputRef.current.value,
     });
     navigate(`/room/${roomId}`);
     localStorage.setItem('user', userId);
