@@ -1,0 +1,33 @@
+@import "../colors";
+
+.home {
+  align-items: center;
+  display: flex;
+  gap: 3.75rem;
+  height: 100vh;
+  justify-content: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.cardSection {
+  background: $darker;
+  border-radius: 1.25rem;
+  display: grid;
+  grid-template-rows: auto 10rem;
+  max-width: 25rem;
+  width: 100%;
+
+  img {
+    border-radius: 1.25rem 1.25rem 0 0;
+    width: 100%;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: $white;
+    font-size: 1.7rem;
+    padding: 1rem;
+  }
+}
