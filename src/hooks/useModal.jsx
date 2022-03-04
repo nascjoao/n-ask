@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 
-import styles from '../styles/hooks/useModal.module.scss';
-
 export default function useModal() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -13,8 +11,8 @@ export default function useModal() {
 
   function Modal({ heading, subheading, children }) {
     return (
-      <div className={`${styles.overlay} overlay`}>
-        <div className={styles.modal}>
+      <div>
+        <div>
           { heading && <h1>{heading}</h1> }
           { subheading && <p>{subheading}</p> }
           { children }

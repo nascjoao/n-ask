@@ -6,7 +6,6 @@ import imgJoinEvent from '../assets/images/join-event.png';
 import useModal from '../hooks/useModal';
 import supabase from '../supabaseClient';
 
-import styles from '../styles/pages/Home.module.scss';
 import { userContext } from '../contexts/User';
 
 export default function Home() {
@@ -43,19 +42,19 @@ export default function Home() {
 
   return (
     <>
-      <div className={styles.home}>
-        <section className={styles.cardSection}>
+      <div>
+        <section>
           <img src={imgNewEvent} alt="Pessoas criando algo" />
           <button type="button" onClick={createOnOpen}>Criar sala</button>
         </section>
-        <section className={styles.cardSection}>
+        <section>
           <img src={imgJoinEvent} alt="Pessoas apresentando algo" />
           <button type="button" onClick={joinOnOpen}>Entrar em sala</button>
         </section>
       </div>
       { joinIsOpen && (
         <JoinModal heading="Entrar" subheading="Insira o ID da sala">
-          <form onSubmit={joinRoom} className={styles.formToJoinRoom}>
+          <form onSubmit={joinRoom}>
             <input
               type="text"
               placeholder="Ex.: bc908c08-dea8-485b-aa0c-07a784d3dcb6"

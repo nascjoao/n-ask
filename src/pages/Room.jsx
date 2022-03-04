@@ -4,7 +4,6 @@ import useValidateRoom from '../hooks/useValidateRoom';
 import useJoinRoom from '../hooks/useJoinRoom';
 import useQuestions from '../hooks/useQuestions';
 import Loading from '../components/Loading';
-import styles from '../styles/pages/Room.module.scss';
 import supabase from '../supabaseClient';
 
 export default function Room() {
@@ -26,7 +25,7 @@ export default function Room() {
   if (!roomIsValid || userIsOwner === undefined) return <Loading />;
 
   return (
-    <div className={styles.container}>
+    <div>
       <div>
         <span>Sala: </span>
         <span>{id}</span>
@@ -35,7 +34,7 @@ export default function Room() {
         <FormToJoin />
       ) }
       { !userIsOwner && (
-        <form onSubmit={sendQuestion} className={styles.formQuestion}>
+        <form onSubmit={sendQuestion}>
           <h2>Faça sua pergunta</h2>
           { user && <strong>{user.name}</strong> }
           <textarea placeholder="Poderia me dizer..." ref={questionInputRef} />
