@@ -35,3 +35,11 @@ textarea {
     color: $lighter;
   }
 }
+
+button {
+  background: $blue;
+  border: none;
+  border-radius: 1.25rem;
+  cursor: pointer;
+  padding: 0.31rem 1.25rem;
+}
