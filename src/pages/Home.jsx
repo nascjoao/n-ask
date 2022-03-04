@@ -70,7 +70,7 @@ export default function Home() {
             height="100%"
             borderRadius={0}
             borderBottomRadius="2xl"
-            fontSize="lg"
+            fontSize="2xl"
             background="gray.900"
           >
             Criar sala
@@ -93,7 +93,7 @@ export default function Home() {
             height="100%"
             borderRadius={0}
             borderBottomRadius="2xl"
-            fontSize="lg"
+            fontSize="2xl"
             background="gray.900"
           >
             Entrar em sala
