@@ -19,19 +19,19 @@ import {
 } from '@chakra-ui/react';
 import imgNewEvent from '../assets/images/new-event.png';
 import imgJoinEvent from '../assets/images/join-event.png';
-import useModal from '../hooks/useModal';
 import supabase from '../supabaseClient';
 
 import { userContext } from '../contexts/User';
 
 export default function Home() {
   const { isOpen: joinIsOpen, onOpen: joinOnOpen, onClose: joinOnClose } = useDisclosure();
-  const { Modal: CreateModal, isOpen: createIsOpen, onOpen: createOnOpen } = useModal();
+  const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
   const roomIdInputRef = useRef();
   const nameInputRef = useRef();
   const navigate = useNavigate();
   const { setUser } = useContext(userContext);
   const [roomIdInputIsFilled, setRoomIdInputIsFilled] = useState(false);
+  const [nameInputIsFilled, setNameInputIsFilled] = useState(false);
 
   async function createRoom(event) {
     event.preventDefault();
@@ -116,7 +116,7 @@ export default function Home() {
       </Flex>
       <Modal isOpen={joinIsOpen} onClose={joinOnClose} isCentered initialFocusRef={roomIdInputRef}>
         <ModalOverlay />
-        <ModalContent background="gray.800">
+        <ModalContent background="gray.800" margin={8}>
           <ModalHeader>
             <Text fontSize="3xl">Entrar</Text>
             <Text fontSize="md">Insira o ID da sala</Text>
@@ -137,13 +137,34 @@ export default function Home() {
           </ModalFooter>
         </ModalContent>
       </Modal>
-      { createIsOpen && (
-        <CreateModal heading="Criar sala" subheading="Como gostaria de se identificar?">
-          <form onSubmit={createRoom}>
-            <input type="text" ref={nameInputRef} placeholder="Digite seu nome" />
-          </form>
-        </CreateModal>
-      ) }
+      <Modal
+        isOpen={createIsOpen}
+        onClose={createOnClose}
+        isCentered
+        initialFocusRef={nameInputRef}
+      >
+        <ModalOverlay />
+        <ModalContent background="gray.800" margin={8}>
+          <ModalHeader>
+            <Text fontSize="3xl">Criar sala</Text>
+            <Text fontSize="md">Como gostaria de se identificar?</Text>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <form onSubmit={createRoom} id="createRoom">
+              <Input
+                type="text"
+                placeholder="Digite seu nome"
+                ref={nameInputRef}
+                onChange={({ target: { value } }) => setNameInputIsFilled(!!value)}
+              />
+            </form>
+          </ModalBody>
+          <ModalFooter>
+            <Button colorScheme="blue" disabled={!nameInputIsFilled} type="submit" form="createRoom">Criar</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </>
   );
 }
