@@ -31,3 +31,17 @@
     padding: 1rem;
   }
 }
+
+.formToJoinRoom {
+  button {
+    margin-top: 1rem;
+    position: absolute;
+    visibility: hidden;
+  }
+
+  input:focus ~ button {
+    display: flex;
+    position: relative;
+    visibility: visible;
+  }
+}
