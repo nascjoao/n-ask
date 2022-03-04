@@ -47,7 +47,7 @@ export default function useJoinRoom(roomId) {
         <form onSubmit={joinEvent}>
           <h1>Boas vindas!</h1>
           <p>Como gostaria de se identificar?</p>
-          <input type="text" ref={usernameInputRef} />
+          <input type="text" ref={usernameInputRef} placeholder="Digite seu nome" />
         </form>
       </Modal>
     );
