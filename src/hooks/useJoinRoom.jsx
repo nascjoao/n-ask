@@ -37,6 +37,8 @@ export default function useJoinRoom(roomId) {
           const { data } = await supabase.from('users').select().eq('id', userId).eq('roomId', roomId);
           if (data && data.length > 0) {
             setUser({ id: data[0].id, name: data[0].name });
+          } else {
+            setUserIsRequired();
           }
         } else {
           setUserIsRequired();
