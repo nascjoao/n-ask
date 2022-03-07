@@ -19,14 +19,14 @@ export default function useQuestions(roomId) {
   useEffect(() => {
     if (roomIsValid) {
       (async () => {
-        const { data: dataQuestions } = await supabase.from('questions').select();
+        const { data: dataQuestions } = await supabase.from('questions').select().eq('roomId', roomId);
         setQuestions(dataQuestions);
       })();
 
       supabase
         .from('questions')
         .on('*', (payload) => {
-          if (payload.eventType === 'INSERT') {
+          if (payload.eventType === 'INSERT' && (payload.new.roomId === roomId)) {
             setQuestions((currentQuestions) => [...currentQuestions, payload.new]);
           } else {
             setQuestions((currentQuestions) => {
