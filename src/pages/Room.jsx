@@ -23,8 +23,8 @@ import supabase from '../supabaseClient';
 export default function Room() {
   const { id } = useParams();
   const roomIsValid = useValidateRoom(id);
-  const { user, userIsRequired, FormToJoin } = useJoinRoom(id);
   const { questions, sendQuestion, questionInputRef } = useQuestions(id);
+  const { user } = useJoinRoom(id);
   const [userIsOwner, setUserIsOwner] = useState();
   const cancelTerminationRef = useRef();
   const navigate = useNavigate();
@@ -53,10 +53,10 @@ export default function Room() {
   }, [roomIsValid]);
 
   async function terminateRoom() {
+    navigate('/');
     await supabase.from('questions').delete().match({ roomId: id });
     await supabase.from('users').delete().match({ roomId: id });
     await supabase.from('rooms').delete().match({ id });
-    navigate('/');
   }
 
   if (!roomIsValid) return <Loading />;
@@ -99,9 +99,6 @@ export default function Room() {
           </AlertDialogContent>
         </AlertDialog>
       </Flex>
-      { userIsRequired && (
-        <FormToJoin />
-      ) }
       { !userIsOwner && (
         <form onSubmit={sendQuestion}>
           <h2>Faça sua pergunta</h2>
