@@ -1,5 +1,19 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Container,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button,
+  Flex,
+  Text,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { CloseIcon } from '@chakra-ui/icons';
 import useValidateRoom from '../hooks/useValidateRoom';
 import useJoinRoom from '../hooks/useJoinRoom';
 import useQuestions from '../hooks/useQuestions';
@@ -12,24 +26,79 @@ export default function Room() {
   const { user, userIsRequired, FormToJoin } = useJoinRoom(id);
   const { questions, sendQuestion, questionInputRef } = useQuestions(id);
   const [userIsOwner, setUserIsOwner] = useState();
+  const cancelTerminationRef = useRef();
+  const navigate = useNavigate();
+  const {
+    isOpen: terminateIsOpen,
+    onOpen: terminateOnOpen,
+    onClose: terminateOnClose,
+  } = useDisclosure();
 
   useEffect(() => {
-    if (user && userIsOwner === undefined) {
+    if (user) {
       (async () => {
         const { data: [{ owner }] } = await supabase.from('rooms').select().eq('id', id);
         setUserIsOwner(owner === user.id);
       })();
     }
+    setUserIsOwner(false);
   }, [user]);
 
-  if (!roomIsValid || userIsOwner === undefined) return <Loading />;
+  useEffect(() => {
+    supabase.from('*').on('DELETE', ({ old }) => {
+      if (old.id === id) {
+        navigate('/');
+      }
+    }).subscribe();
+  }, [roomIsValid]);
+
+  async function terminateRoom() {
+    await supabase.from('questions').delete().match({ roomId: id });
+    await supabase.from('users').delete().match({ roomId: id });
+    await supabase.from('rooms').delete().match({ id });
+    navigate('/');
+  }
+
+  if (!roomIsValid) return <Loading />;
 
   return (
-    <div>
-      <div>
-        <span>Sala: </span>
-        <span>{id}</span>
-      </div>
+    <Container
+      maxWidth="container.md"
+      margin="0 auto"
+      marginTop={20}
+    >
+      <Flex as="header" justifyContent="space-between" alignItems="center">
+        <span>{`Sala: ${id}`}</span>
+        { userIsOwner && (
+          <Button leftIcon={<CloseIcon />} variant="outline" onClick={terminateOnOpen}>
+            Finalizar sala
+          </Button>
+        ) }
+        <AlertDialog
+          isOpen={terminateIsOpen}
+          onClose={terminateOnClose}
+          leastDestructiveRef={cancelTerminationRef}
+        >
+          <AlertDialogOverlay />
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              Tem certeza?
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Todas as perguntas serão perdidas e a sala ficará indisponível.
+              <Text fontWeight="bold" marginTop={4}>Essa ação não poderá ser desfeita.</Text>
+            </AlertDialogBody>
+            <AlertDialogFooter gap={4}>
+              <Button colorScheme="blue" variant="outline" onClick={terminateRoom}>
+                Sim, finalizar
+              </Button>
+              <Button colorScheme="blue" onClick={terminateOnClose} ref={cancelTerminationRef}>
+                Ainda não
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Flex>
       { userIsRequired && (
         <FormToJoin />
       ) }
@@ -41,11 +110,13 @@ export default function Room() {
           <button type="submit">Enviar</button>
         </form>
       ) }
-      { questions.map((question) => (
+      { !questions.length ? (
+        <h1>Nenhuma questão enviada</h1>
+      ) : questions.map((question) => (
         <div key={question.id}>
           {question.content}
         </div>
       )) }
-    </div>
+    </Container>
   );
 }
