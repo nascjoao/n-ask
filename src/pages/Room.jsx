@@ -91,7 +91,7 @@ export default function Room() {
 
   function submitQuestion(event) {
     event.preventDefault();
-    if (remainingCharacters >= 0) {
+    if (remainingCharacters >= 0 && questionInputRef.current.value.trim()) {
       sendQuestion(event);
       questionInputRef.current.value = '';
       questionInputRef.current.setAttribute('style', 'height: auto');
@@ -107,7 +107,7 @@ export default function Room() {
       margin="0 auto"
       marginTop={20}
     >
-      <Flex as="header" justifyContent="space-between" alignItems="center">
+      <Flex as="header" justifyContent="space-between" alignItems="center" marginBottom={8}>
         <Button
           rightIcon={<CopyIcon />}
           onClick={copyRoomId}
@@ -151,7 +151,12 @@ export default function Room() {
         </AlertDialog>
       </Flex>
       { !userIsOwner && (
-        <form onSubmit={submitQuestion}>
+        <motion.form
+          onSubmit={submitQuestion}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
           <Flex justifyContent="space-between">
             <Text fontWeight="bold">{`Faça uma pergunta${`, ${user && user.name}`}`}</Text>
             <Badge
@@ -172,7 +177,7 @@ export default function Room() {
             marginBottom={4}
           />
           <AnimatePresence>
-            { remainingCharacters !== 508 && (
+            { (remainingCharacters !== 508 && questionInputRef.current.value.trim()) && (
               <MotionButton
                 type="submit"
                 marginBottom={4}
@@ -187,10 +192,16 @@ export default function Room() {
               </MotionButton>
             )}
           </AnimatePresence>
-        </form>
+        </motion.form>
       ) }
-      { !questions.length ? (
-        <h1>Nenhuma questão enviada</h1>
+      { !questions.length && userIsOwner ? (
+        <>
+          <Text fontWeight="bold" fontSize="xl">Nenhuma pergunta</Text>
+          <Text>
+            Compartilhe o ID da sala com outras pessoas
+            para receber perguntas.
+          </Text>
+        </>
       ) : questions.map((question) => (
         <Question layout key={question.id} data={question} />
       )) }
