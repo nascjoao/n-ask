@@ -1,11 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import useValidateRoom from './useValidateRoom';
 import supabase from '../supabaseClient';
+import { userContext } from '../contexts/User';
 
 export default function useQuestions(roomId) {
   const roomIsValid = useValidateRoom(roomId);
   const [questions, setQuestions] = useState([]);
   const questionInputRef = useRef();
+  const { user } = useContext(userContext);
 
   async function sendQuestion(event) {
     event.preventDefault();
@@ -17,7 +24,7 @@ export default function useQuestions(roomId) {
   }
 
   useEffect(() => {
-    if (roomIsValid) {
+    if (roomIsValid && (user && user.id)) {
       (async () => {
         const { data: dataQuestions } = await supabase.from('questions').select().eq('roomId', roomId);
         setQuestions(dataQuestions);
@@ -39,7 +46,7 @@ export default function useQuestions(roomId) {
         })
         .subscribe();
     }
-  }, [roomIsValid]);
+  }, [roomIsValid, user]);
 
   return { questions, sendQuestion, questionInputRef };
 }
