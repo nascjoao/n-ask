@@ -25,13 +25,10 @@ import { userContext } from '../contexts/User';
 
 export default function Home() {
   const { isOpen: joinIsOpen, onOpen: joinOnOpen, onClose: joinOnClose } = useDisclosure();
-  const { isOpen: createIsOpen, onOpen: createOnOpen, onClose: createOnClose } = useDisclosure();
   const roomIdInputRef = useRef();
-  const nameInputRef = useRef();
   const navigate = useNavigate();
   const { setUser } = useContext(userContext);
   const [roomIdInputIsFilled, setRoomIdInputIsFilled] = useState(false);
-  const [nameInputIsFilled, setNameInputIsFilled] = useState(false);
 
   async function createRoom(event) {
     event.preventDefault();
@@ -41,12 +38,10 @@ export default function Home() {
     });
     await supabase.from('users').insert({
       id: userId,
-      name: nameInputRef.current.value,
       roomId,
     });
     setUser({
       id: userId,
-      name: nameInputRef.current.value,
     });
     navigate(`/room/${roomId}`);
     localStorage.setItem('user', userId);
@@ -80,7 +75,7 @@ export default function Home() {
             borderTopRadius="2xl"
           />
           <Button
-            onClick={createOnOpen}
+            onClick={createRoom}
             height="100%"
             borderRadius={0}
             borderBottomRadius="2xl"
@@ -128,40 +123,12 @@ export default function Home() {
                 type="text"
                 placeholder="Ex.: bc908c08-dea8-485b-aa0c-07a784d3dcb6"
                 ref={roomIdInputRef}
-                onChange={({ target: { value } }) => setRoomIdInputIsFilled(!!value)}
+                onChange={({ target: { value } }) => setRoomIdInputIsFilled(!!value.trim())}
               />
             </form>
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="blue" disabled={!roomIdInputIsFilled} type="submit" form="joinRoom">Entrar</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-      <Modal
-        isOpen={createIsOpen}
-        onClose={createOnClose}
-        isCentered
-        initialFocusRef={nameInputRef}
-      >
-        <ModalOverlay />
-        <ModalContent background="gray.800" margin={8}>
-          <ModalHeader>
-            <Text fontSize="3xl">Criar sala</Text>
-            <Text fontSize="md">Como gostaria de se identificar?</Text>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <form onSubmit={createRoom} id="createRoom">
-              <Input
-                type="text"
-                placeholder="Digite seu nome"
-                ref={nameInputRef}
-                onChange={({ target: { value } }) => setNameInputIsFilled(!!value)}
-              />
-            </form>
-          </ModalBody>
-          <ModalFooter>
-            <Button colorScheme="blue" disabled={!nameInputIsFilled} type="submit" form="createRoom">Criar</Button>
           </ModalFooter>
         </ModalContent>
       </Modal>
