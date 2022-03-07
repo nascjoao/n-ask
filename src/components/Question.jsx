@@ -1,9 +1,23 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {
   Box,
   IconButton,
   Flex,
   Text,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogCloseButton,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button,
+  useDisclosure,
 } from '@chakra-ui/react';
 import { motion } from 'framer-motion';
 import { CheckIcon, DeleteIcon } from '@chakra-ui/icons';
@@ -18,6 +32,12 @@ export default function Question({ data: question }) {
   const [roomOwner, setRoomOwner] = useState('');
   const { user } = useContext(userContext);
   const { id: roomId } = useParams();
+  const {
+    isOpen: deleteQuestionIsOpen,
+    onOpen: deleteQuestionOnOpen,
+    onClose: deleteQuestionOnClose,
+  } = useDisclosure();
+  const cancelDeleteQuestionRef = useRef();
 
   useEffect(() => {
     (async () => {
@@ -39,6 +59,8 @@ export default function Question({ data: question }) {
       borderColor="gray.700"
       borderRadius="xl"
       padding={4}
+      marginTop={4}
+      marginBottom={4}
     >
       <Flex alignItems="center" justifyContent="space-between">
         <Text fontWeight="bold" fontSize="lg">{questionAuthor.name}</Text>
@@ -53,7 +75,46 @@ export default function Question({ data: question }) {
             />
           ) }
           { user.id === questionAuthor.id && (
-            <IconButton icon={<DeleteIcon />} aria-label="Apagar" colorScheme="red" variant="ghost" />
+            <>
+              <IconButton
+                icon={<DeleteIcon />}
+                aria-label="Apagar"
+                colorScheme="red"
+                variant="ghost"
+                onClick={deleteQuestionOnOpen}
+              />
+              <AlertDialog
+                isOpen={deleteQuestionIsOpen}
+                onClose={deleteQuestionOnClose}
+                leastDestructiveRef={cancelDeleteQuestionRef}
+              >
+                <AlertDialogOverlay />
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    Tem certeza?
+                  </AlertDialogHeader>
+                  <AlertDialogCloseButton />
+                  <AlertDialogBody>
+                    Após apagar sua pergunta, não será possível recuperá-la.
+                  </AlertDialogBody>
+                  <AlertDialogFooter gap={2}>
+                    <Button
+                      variant="outline"
+                      onClick={() => deleteQuestion(question.id)}
+                    >
+                      Sim, apagar
+                    </Button>
+                    <Button
+                      colorScheme="blue"
+                      ref={cancelDeleteQuestionRef}
+                      onClick={deleteQuestionOnClose}
+                    >
+                      Cancelar
+                    </Button>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
           ) }
         </Flex>
       </Flex>
