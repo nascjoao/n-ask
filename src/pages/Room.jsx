@@ -14,9 +14,11 @@ import {
   useDisclosure,
   Textarea,
   Badge,
+  useToast,
+  useClipboard,
 } from '@chakra-ui/react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CloseIcon } from '@chakra-ui/icons';
+import { CloseIcon, CopyIcon } from '@chakra-ui/icons';
 import useValidateRoom from '../hooks/useValidateRoom';
 import useJoinRoom from '../hooks/useJoinRoom';
 import useQuestions from '../hooks/useQuestions';
@@ -41,6 +43,8 @@ export default function Room() {
     onOpen: terminateOnOpen,
     onClose: terminateOnClose,
   } = useDisclosure();
+  const toast = useToast();
+  const { onCopy } = useClipboard(id);
 
   useEffect(() => {
     if (user) {
@@ -59,6 +63,17 @@ export default function Room() {
       }
     }).subscribe();
   }, [roomIsValid]);
+
+  function copyRoomId() {
+    onCopy();
+    toast({
+      title: 'Copiado!',
+      description: 'Compartilhe esse ID com as pessoas para receber perguntas',
+      status: 'info',
+      duration: 9000,
+      isClosable: true,
+    });
+  }
 
   async function terminateRoom() {
     navigate('/');
@@ -93,9 +108,20 @@ export default function Room() {
       marginTop={20}
     >
       <Flex as="header" justifyContent="space-between" alignItems="center">
-        <span>{`Sala: ${id}`}</span>
+        <Button
+          rightIcon={<CopyIcon />}
+          onClick={copyRoomId}
+        >
+          {`Sala: ${id}`}
+
+        </Button>
         { userIsOwner && (
-          <Button leftIcon={<CloseIcon />} variant="outline" onClick={terminateOnOpen}>
+          <Button
+            leftIcon={<CloseIcon />}
+            variant="outline"
+            onClick={terminateOnOpen}
+            width="max-content"
+          >
             Finalizar sala
           </Button>
         ) }
