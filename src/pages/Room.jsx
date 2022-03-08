@@ -59,7 +59,7 @@ export default function Room() {
   useEffect(() => {
     supabase.from('*').on('DELETE', ({ old }) => {
       if (old.id === id) {
-        navigate('/');
+        navigate('/room/ended');
       }
     }).subscribe();
   }, [roomIsValid]);
@@ -76,7 +76,6 @@ export default function Room() {
   }
 
   async function terminateRoom() {
-    navigate('/');
     await supabase.from('questions').delete().match({ roomId: id });
     await supabase.from('users').delete().match({ roomId: id });
     await supabase.from('rooms').delete().match({ id });
@@ -155,7 +154,7 @@ export default function Room() {
           onSubmit={submitQuestion}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.2 }}
+          transition={{ delay: 1 }}
         >
           <Flex justifyContent="space-between">
             <Text fontWeight="bold">{`Faça uma pergunta${`, ${user && user.name}`}`}</Text>
@@ -202,9 +201,13 @@ export default function Room() {
             para receber perguntas.
           </Text>
         </>
-      ) : questions.map((question) => (
-        <Question layout key={question.id} data={question} />
-      )) }
+      ) : (
+        <AnimatePresence>
+          {questions.map((question) => (
+            <Question layout key={question.id} data={question} />
+          ))}
+        </AnimatePresence>
+      ) }
     </Container>
   );
 }
