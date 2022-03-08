@@ -1,14 +1,12 @@
 import React from 'react';
-import { TailSpin } from 'react-loader-spinner';
+import { Flex, Spinner } from '@chakra-ui/react';
 
 export default function Loading() {
   return (
-    <div>
-      <TailSpin
-        height="100"
-        width="100"
-        color="grey"
+    <Flex height="100vh" alignItems="center" justifyContent="center">
+      <Spinner
+        size="xl"
       />
-    </div>
+    </Flex>
   );
 }
