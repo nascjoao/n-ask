@@ -4,7 +4,7 @@
 <img alt="Version 0.1.0" src="https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000" />
 </p>
 
-### Allow people to send n-ask
+### Allow people to make n-ask
 
 ---
 
