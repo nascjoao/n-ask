@@ -2,11 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import { UserProvider } from './contexts/User';
-import './styles/global.scss';
+import ThemeProvider from './theme/ThemeProvider';
 
 ReactDOM.render(
-  <UserProvider>
-    <App />
-  </UserProvider>,
+  <ThemeProvider>
+    <UserProvider>
+      <App />
+    </UserProvider>
+  </ThemeProvider>,
   document.getElementById('root'),
 );
