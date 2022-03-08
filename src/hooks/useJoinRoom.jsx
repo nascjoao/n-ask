@@ -17,8 +17,16 @@ export default function useJoinRoom(roomId) {
     if (roomIsValid) {
       (async () => {
         if (userId) {
-          const { data } = await supabase.from('users').select().eq('id', userId).eq('roomId', roomId);
+          const { data } = await supabase.from('users').select().eq('id', userId);
           if (data && data.length > 0) {
+            if (data[0].roomId !== roomId) {
+              navigate(`/room/${data[0].roomId}`, {
+                state: {
+                  abandoned: true,
+                },
+                replace: true,
+              });
+            }
             setUser({ id: data[0].id, name: data[0].name });
           } else {
             navigate('/room/identification', {

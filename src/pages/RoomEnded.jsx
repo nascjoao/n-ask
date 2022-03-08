@@ -3,11 +3,18 @@ import {
   Grid,
   Heading,
   Text,
+  useToast,
 } from '@chakra-ui/react';
-import React from 'react';
+import React, { useEffect } from 'react';
 import Home from './Home';
 
 export default function RoomEnded() {
+  const toast = useToast();
+
+  useEffect(() => {
+    toast.closeAll();
+  }, []);
+
   return (
     <Grid maxWidth="container.lg" justifyContent="center" minHeight="100vh" padding={8} margin="0 auto" gap={4}>
       <Heading alignSelf="end">Essa sala foi finalizada</Heading>

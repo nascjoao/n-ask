@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import {
   Container,
   AlertDialog,
@@ -38,6 +38,7 @@ export default function Room() {
   const navigate = useNavigate();
   const [remainingCharacters, setRemainingCharacters] = useState(508);
   const [invalidQuestion, setInvalidQuestion] = useState(false);
+  const { state } = useLocation();
   const {
     isOpen: terminateIsOpen,
     onOpen: terminateOnOpen,
@@ -45,6 +46,26 @@ export default function Room() {
   } = useDisclosure();
   const toast = useToast();
   const { onCopy } = useClipboard(id);
+
+  useEffect(() => {
+    if (state && state.abandoned) {
+      toast({
+        title: 'Erro',
+        description: 'Não foi possível entrar na sala desejada',
+        isClosable: true,
+        status: 'error',
+        duration: null,
+      });
+      toast({
+        title: 'Atenção',
+        description: `Parece que você possui essa sala (${id}). Antes de
+        entrar em uma nova, é necessário finalizar essa.`,
+        isClosable: true,
+        status: 'warning',
+        duration: null,
+      });
+    }
+  }, [state]);
 
   useEffect(() => {
     if (user) {
@@ -59,7 +80,11 @@ export default function Room() {
   useEffect(() => {
     supabase.from('*').on('DELETE', ({ old }) => {
       if (old.id === id) {
-        navigate('/room/ended');
+        navigate('/room/ended', {
+          state: {
+            abandoned: false,
+          },
+        });
       }
     }).subscribe();
   }, [roomIsValid]);
@@ -76,6 +101,11 @@ export default function Room() {
   }
 
   async function terminateRoom() {
+    navigate('/room/ended', {
+      state: {
+        abandoned: false,
+      },
+    });
     await supabase.from('questions').delete().match({ roomId: id });
     await supabase.from('users').delete().match({ roomId: id });
     await supabase.from('rooms').delete().match({ id });
