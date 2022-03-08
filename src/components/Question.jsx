@@ -61,6 +61,10 @@ export default function Question({ data: question }) {
       padding={4}
       marginTop={4}
       marginBottom={4}
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+      transition={{ delay: 1 }}
     >
       <Flex alignItems="center" justifyContent="space-between">
         <Text fontWeight="bold" fontSize="lg">{questionAuthor.name}</Text>
