@@ -106,13 +106,22 @@ export default function Room() {
       margin="0 auto"
       marginTop={20}
     >
-      <Flex as="header" justifyContent="space-between" alignItems="center" marginBottom={8}>
+      <Flex
+        as="header"
+        justifyContent="space-between"
+        alignItems={['start', 'center']}
+        marginBottom={8}
+        flexDirection={['column', 'row']}
+        gap={4}
+      >
         <Button
           rightIcon={<CopyIcon />}
           onClick={copyRoomId}
+          maxW="100%"
         >
-          {`Sala: ${id}`}
-
+          <Text isTruncated>
+            {`Sala: ${id}`}
+          </Text>
         </Button>
         { userIsOwner && (
           <Button
@@ -156,7 +165,7 @@ export default function Room() {
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" flexDirection={['column', 'row']}>
             <Text fontWeight="bold">{`Faça uma pergunta${`, ${user && user.name}`}`}</Text>
             <Badge
               margin={2}
