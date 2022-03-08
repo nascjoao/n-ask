@@ -55,11 +55,9 @@ export default function Home() {
   return (
     <>
       <Flex
-        minHeight="100vh"
         alignItems="center"
         justifyContent="center"
         gap={8}
-        padding={8}
         flexDirection={['column', 'row']}
       >
         <Box
