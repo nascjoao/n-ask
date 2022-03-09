@@ -1,5 +1,10 @@
-import React, { useContext, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { v4 as generateUUID } from 'uuid';
 import {
   Flex,
@@ -16,6 +21,7 @@ import {
   useDisclosure,
   Input,
   Text,
+  useToast,
 } from '@chakra-ui/react';
 import imgNewEvent from '../assets/images/new-event.png';
 import imgJoinEvent from '../assets/images/join-event.png';
@@ -29,6 +35,8 @@ export default function Home() {
   const navigate = useNavigate();
   const { setUser } = useContext(userContext);
   const [roomIdInputIsFilled, setRoomIdInputIsFilled] = useState(false);
+  const { state } = useLocation();
+  const toast = useToast();
 
   async function createRoom(event) {
     event.preventDefault();
@@ -51,6 +59,18 @@ export default function Home() {
     event.preventDefault();
     navigate(`/room/${roomIdInputRef.current.value}`);
   }
+
+  useEffect(() => {
+    if (state && state.notFound) {
+      toast({
+        title: 'Sala não encontrada',
+        description: 'Parece que não existe nenhuma sala com o ID informado.',
+        duration: 9000,
+        isClosable: true,
+        status: 'error',
+      });
+    }
+  }, []);
 
   return (
     <>

@@ -27,9 +27,9 @@ function App() {
         <Route path="/room">
           <Route path="ended" element={<RoomEnded />} />
           <Route path="identification" element={<Identification />} />
-          <Route path="not-found" element={<h1>Não existe nenhuma sala com esse ID</h1>} />
+          <Route path="not-found" element={<Navigate to="/" state={{ notFound: true }} replace />} />
           <Route path=":id" element={<Room />} />
-          <Route path="*" index element={<Navigate to="/" />} />
+          <Route path="*" index element={<Navigate to="/" replace />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>
