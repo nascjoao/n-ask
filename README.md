@@ -1,7 +1,7 @@
 <p align="center">
 <img alt="n-ask" src="public/logo.svg" width="200" />
 <br />
-<img alt="Version 0.1.0" src="https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000" />
+<img alt="Version 0.1.1" src="https://img.shields.io/badge/version-0.1.1-blue.svg?cacheSeconds=2592000" />
 </p>
 
 ### Allow people to make n-ask
