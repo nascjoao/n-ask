@@ -64,6 +64,8 @@ export default function Room() {
         status: 'warning',
         duration: null,
       });
+    } else {
+      toast.closeAll();
     }
   }, [state]);
 
